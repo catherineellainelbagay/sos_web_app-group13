@@ -3,27 +3,54 @@
 <head>
     <title>Responder Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // Auto-refresh every 5 seconds
+        setInterval(() => {
+            location.reload();
+        }, 5000);
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>🚨 Need Help? You're in the Right Place!</h1>
         <h2>Welcome, {{ role }}</h2>
 
-        <div class="section">
-            <h3>📍 GPS Information</h3>
-            <p><strong>User Location:</strong> Lat {{ user.lat }}, Lon {{ user.lon }}</p>
-            <p><strong>Responder Location:</strong> Lat {{ responder.lat }}, Lon {{ responder.lon }}</p>
-            <p><strong>Distance:</strong> {{ distance }} meters</p>
-        </div>
 
-        {% if role == "Responder" %}
-        <div class="section">
-            <h3>📨 SMS Alert System</h3>
-            <button onclick="sendSMS()">Send SIM Alert</button>
-            <p id="sms-status"></p>
-        </div>
+        {% if role != "Responder" %}
+            <p>This dashboard is only for Responders. <a href="{{ url_for('logout') }}" class="btn">Back</a></p>
+        {% else %}
+            <div class="section">
+                <h3>📍 GPS Information</h3>
+                <p><strong>User Location:</strong> Lat {{ user.lat }}, Lon {{ user.lon }}</p>
+                <p><strong>Responder Location:</strong> Lat {{ responder.lat }}, Lon {{ responder.lon }}</p>
+                <p><strong>Distance:</strong> {{ distance }} meters</p>
+                <p>
+                    <a target="_blank" href="https://www.google.com/maps?q={{ user.lat }},{{ user.lon }}">
+                        📍 View User Location on Google Maps
+                    </a>
+                </p>
+            </div>
+
+
+            <div class="section">
+                <h3>📨 SMS Alert System</h3>
+                <button onclick="sendSMS()">Send SIM Alert</button>
+                <p id="sms-status"></p>
+            </div>
+
+
+            <div class="section">
+                <h3>🛰️ Simulate GPS Update</h3>
+                <form method="POST" action="{{ url_for('simulate') }}">
+                    <button type="submit">Simulate New GPS Coordinates</button>
+                </form>
+            </div>
+
+
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
         {% endif %}
     </div>
+
 
     <script>
         function sendSMS() {
@@ -36,3 +63,6 @@
     </script>
 </body>
 </html>
+
+
+

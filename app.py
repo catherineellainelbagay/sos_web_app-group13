@@ -1,27 +1,26 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import random
+from math import radians, sin, cos, sqrt, atan2
 
 app = Flask(__name__)
 app.secret_key = 'secret123'  # Needed for sessions
 
-# Dummy location data (simulated GPS from user and responder)
+# Simulated GPS positions (for user and responder)
 user_location = {'lat': 14.5995, 'lon': 120.9842}
 responder_location = {'lat': 14.6000, 'lon': 120.9850}
 
+# Calculate distance using Haversine formula
 def calculate_distance(user, responder):
-    # Haversine Formula (simplified for local distance in meters)
-    from math import radians, sin, cos, sqrt, atan2
-    R = 6371000  # radius in meters
+    R = 6371000  # Earth radius in meters
     lat1, lon1 = radians(user['lat']), radians(user['lon'])
-    lat2, lon2 = radians(responder['lat']), radians(responder['lon'])
-
+    lat2, lon2 = radians(responder['lat']), responder['lon']
     dlat = lat2 - lat1
-    dlon = lon2 - lon1
+    dlon = radians(responder['lon']) - lon1
     a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    distance = R * c
-    return round(distance, 2)
+    return round(R * c, 2)
 
+# Login route
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -30,7 +29,8 @@ def login():
         return redirect(url_for('dashboard'))
     return render_template('login.html')
 
-@app.route('/dashboard')
+# Dashboard route
+@app.route('/dashboard', methods=['GET'])
 def dashboard():
     if 'role' not in session:
         return redirect(url_for('login'))
@@ -41,15 +41,24 @@ def dashboard():
                            responder=responder_location,
                            distance=distance)
 
+# Simulated SMS sending route
 @app.route('/send_sms')
 def send_sms():
-    # Simulated SMS function
     return jsonify({"message": "📤 SIM Alert Sent (simulated)!"})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Simulate user GPS movement
+@app.route('/simulate', methods=['POST'])
+def simulate():
+    user_location['lat'] += random.uniform(-0.0005, 0.0005)
+    user_location['lon'] += random.uniform(-0.0005, 0.0005)
+    return redirect(url_for('dashboard'))
 
+# Logout route
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+# Start the Flask server
+if __name__ == '__main__':
+    app.run(debug=True)
