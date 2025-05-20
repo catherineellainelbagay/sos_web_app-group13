@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - SOS Tracker</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>SOS GPS Tracker</h2>
+        <p>Select your role to proceed:</p>
+
+        <form method="POST">
+            <select name="role" required>
+                <option value="" disabled selected>-- Select Role --</option>
+                <option value="User">User</option>
+                <option value="Responder">Responder</option>
+            </select>
+            <br><br>
+            <input type="submit" value="Login" class="btn">
+        </form>
+    </div>
+</body>
+</html>

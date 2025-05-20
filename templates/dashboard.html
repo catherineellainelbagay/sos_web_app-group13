@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Responder Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Need Help? You're in the Right Place!</h1>
+        <h2>Welcome, {{ role }}</h2>
+
+        <div class="section">
+            <h3>📍 GPS Information</h3>
+            <p><strong>User Location:</strong> Lat {{ user.lat }}, Lon {{ user.lon }}</p>
+            <p><strong>Responder Location:</strong> Lat {{ responder.lat }}, Lon {{ responder.lon }}</p>
+            <p><strong>Distance:</strong> {{ distance }} meters</p>
+        </div>
+
+        {% if role == "Responder" %}
+        <div class="section">
+            <h3>📨 SMS Alert System</h3>
+            <button onclick="sendSMS()">Send SIM Alert</button>
+            <p id="sms-status"></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function sendSMS() {
+            fetch("/send_sms")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("sms-status").innerText = data.message;
+                });
+        }
+    </script>
+</body>
+</html>
