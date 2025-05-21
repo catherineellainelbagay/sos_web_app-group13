@@ -152,48 +152,66 @@
   <audio id="ping-sound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    function sendSMS() {
-      const sound = document.getElementById("ping-sound");
-      sound?.play();
+ <script>
+  function sendSMS() {
+    const sound = document.getElementById("ping-sound");
+    sound?.play();
 
-      fetch("/send_sms")
-        .then((res) => res.json())
-        .then((data) => {
-          const modal = document.getElementById("simAlertModal");
-          modal.classList.add("active");
-          setTimeout(() => modal.classList.remove("active"), 2000);
-          document.getElementById("sms-status").innerText = data.message;
-        });
-    }
+    fetch("/send_sms")
+      .then((res) => res.json())
+      .then((data) => {
+        const modal = document.getElementById("simAlertModal");
+        modal.classList.add("active");
+        setTimeout(() => modal.classList.remove("active"), 2000);
+        document.getElementById("sms-status").innerText = data.message;
+      });
+  }
 
-    function showLoading() {
-      document.getElementById("loading").classList.add("active");
-    }
+  function showLoading() {
+    document.getElementById("loading").classList.add("active");
+  }
 
-    // Leaflet map setup
-    const userLatVal = {{ user.lat | tojson }};
-    const userLonVal = {{ user.lon | tojson }};
-    const responderLatVal = {{ responder.lat | tojson }};
-    const responderLonVal = {{ responder.lon | tojson }};
+  const userLatVal = {{ user.lat | tojson }};
+  const userLonVal = {{ user.lon | tojson }};
+  const responderLatVal = {{ responder.lat | tojson }};
+  const responderLonVal = {{ responder.lon | tojson }};
+  const currentDistance = {{ distance | tojson }};
 
-    const map = L.map("map").setView([userLatVal, userLonVal], 16);
+  const map = L.map("map").setView([userLatVal, userLonVal], 16);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "© OpenStreetMap contributors",
-    }).addTo(map);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap contributors",
+  }).addTo(map);
 
-    L.marker([userLatVal, userLonVal]).addTo(map).bindPopup("📍 User Location").openPopup();
+  L.marker([userLatVal, userLonVal]).addTo(map)
+    .bindPopup("📍 User Location").openPopup();
 
-    L.marker([responderLatVal, responderLonVal], {
-      icon: L.icon({
-        iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-      }),
-    }).addTo(map).bindPopup("🚨 Responder");
+  L.marker([responderLatVal, responderLonVal], {
+    icon: L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+    }),
+  }).addTo(map).bindPopup("🚨 Responder");
 
-    setTimeout(() => location.reload(), 5000);
-  </script>
+  // 🟢 Draw white dashed line between user and responder
+  const lineCoords = [
+    [userLatVal, userLonVal],
+    [responderLatVal, responderLonVal]
+  ];
+  L.polyline(lineCoords, {
+    color: "black",
+    weight: 3,
+    dashArray: "5, 3"
+  }).addTo(map);
+
+  // 🔔 Alert if close
+  if (currentDistance <= 10) {
+    alert("🔔 Responder has arrived!");
+  }
+
+  // 🔄 Auto-refresh after 5 seconds
+  setTimeout(() => location.reload(), 5000);
+</script>
 </body>
 </html>
