@@ -1,23 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login - SOS Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SOS Responder</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f6eaea, #f6eeee);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .glass-box {
+            background: rgba(20, 20, 20, 0.75); /* Dark pop-out background */
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-box h2 {
+            margin-bottom: 20px;
+        }
+
+        .glass-box p {
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .logo {
+            width: 80px;
+            margin-bottom: 15px;
+            animation: floatLogo 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatLogo {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: white;
+            color: #e52d27;
+        }
+
+        .btn:disabled {
+            background-color: #aaa;
+            color: white;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>SOS GPS Tracker</h2>
-        <p>Select your role to proceed:</p>
-
-        <form method="POST">
-            <select name="role" required>
-                <option value="" disabled selected>-- Select Role --</option>
-                <option value="User">User</option>
-                <option value="Responder">Responder</option>
-            </select>
-            <br><br>
-            <input type="submit" value="Login" class="btn">
+    <div class="glass-box fade-in">
+        <img src="https://cdn-icons-png.flaticon.com/512/3500/3500833.png" alt="SOS Logo" class="logo">
+        <h2>🚨 SOS Tracker Login</h2>
+        <p>Secure login to the Responder Dashboard</p>
+        <form method="POST" onsubmit="startLogin()">
+            <input type="hidden" name="role" value="Responder">
+            <input id="loginBtn" type="submit" value="Login" class="btn">
+            <div id="spinner" class="spinner"></div>
         </form>
     </div>
+
+    <audio id="ping-sound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
+
+    <script>
+        function startLogin() {
+            const btn = document.getElementById('loginBtn');
+            const spinner = document.getElementById('spinner');
+            const sound = document.getElementById('ping-sound');
+
+            sound.play();
+            btn.disabled = true;
+            btn.value = "Logging in...";
+            spinner.style.display = "block";
+        }
+    </script>
 </body>
 </html>

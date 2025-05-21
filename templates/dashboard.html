@@ -1,68 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Responder Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script>
-        // Auto-refresh every 5 seconds
-        setInterval(() => {
-            location.reload();
-        }, 5000);
-    </script>
+  <meta charset="UTF-8" />
+  <title>Responder Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #d3f7c3, #d3f7c3);
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+    }
+
+    .container {
+      background: rgba(54, 54, 85, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 30px 40px;
+      max-width: 700px;
+      margin: 40px auto;
+      box-shadow: 0 8px 32px 0 rgba(104, 96, 96, 0.095);
+      color: white;
+      border: 1px solid rgba(236, 221, 221, 0.1);
+    }
+
+    .section {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    #map {
+      height: 300px;
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    button, .btn {
+      background-color: transparent;
+      color: white;
+      border: 1px solid white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover, .btn:hover {
+      background-color: white;
+      color: #e52d27;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      color: black;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 10000;
+      text-align: center;
+    }
+
+    .modal.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚨 Need Help? You're in the Right Place!</h1>
-        <h2>Welcome, {{ role }}</h2>
+  <div class="container">
+    <h2>🚨 SOS Responder Dashboard</h2>
 
-
-        {% if role != "Responder" %}
-            <p>This dashboard is only for Responders. <a href="{{ url_for('logout') }}" class="btn">Back</a></p>
-        {% else %}
-            <div class="section">
-                <h3>📍 GPS Information</h3>
-                <p><strong>User Location:</strong> Lat {{ user.lat }}, Lon {{ user.lon }}</p>
-                <p><strong>Responder Location:</strong> Lat {{ responder.lat }}, Lon {{ responder.lon }}</p>
-                <p><strong>Distance:</strong> {{ distance }} meters</p>
-                <p>
-                    <a target="_blank" href="https://www.google.com/maps?q={{ user.lat }},{{ user.lon }}">
-                        📍 View User Location on Google Maps
-                    </a>
-                </p>
-            </div>
-
-
-            <div class="section">
-                <h3>📨 SMS Alert System</h3>
-                <button onclick="sendSMS()">Send SIM Alert</button>
-                <p id="sms-status"></p>
-            </div>
-
-
-            <div class="section">
-                <h3>🛰️ Simulate GPS Update</h3>
-                <form method="POST" action="{{ url_for('simulate') }}">
-                    <button type="submit">Simulate New GPS Coordinates</button>
-                </form>
-            </div>
-
-
-            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
-        {% endif %}
+    <div class="section">
+      <h3>📍 GPS Information</h3>
+      <p><strong>User Location:</strong> Lat {{ user.lat }}, Lon {{ user.lon }}</p>
+      <p><strong>Responder Location:</strong> Lat {{ responder.lat }}, Lon {{ responder.lon }}</p>
+      <p><strong>Distance:</strong> {{ distance }} meters</p>
+      <p>
+        <a target="_blank" href="https://www.google.com/maps?q={{ user.lat }},{{ user.lon }}">
+          📍 View User Location on Google Maps
+        </a>
+      </p>
+      <div id="map"></div>
     </div>
 
+    <div class="section">
+      <h3>📨 SMS Alert System</h3>
+      <button onclick="sendSMS()">Send SIM Alert</button>
+      <p id="sms-status"></p>
+    </div>
 
-    <script>
-        function sendSMS() {
-            fetch("/send_sms")
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("sms-status").innerText = data.message;
-                });
-        }
-    </script>
+    <div class="section">
+      <h3>🛰️ Simulate GPS Update</h3>
+      <form method="POST" action="{{ url_for('simulate') }}" onsubmit="showLoading()">
+        <button type="submit">Simulate New GPS Coordinates</button>
+      </form>
+    </div>
+
+    <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+  </div>
+
+  <!-- Overlay and modal -->
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="simAlertModal" class="modal">
+    <p>📨 SIM Alert Sent!</p>
+  </div>
+
+  <audio id="ping-sound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    function sendSMS() {
+      const sound = document.getElementById("ping-sound");
+      sound?.play();
+
+      fetch("/send_sms")
+        .then((res) => res.json())
+        .then((data) => {
+          const modal = document.getElementById("simAlertModal");
+          modal.classList.add("active");
+          setTimeout(() => modal.classList.remove("active"), 2000);
+          document.getElementById("sms-status").innerText = data.message;
+        });
+    }
+
+    function showLoading() {
+      document.getElementById("loading").classList.add("active");
+    }
+
+    // Leaflet map setup
+    const userLatVal = {{ user.lat | tojson }};
+    const userLonVal = {{ user.lon | tojson }};
+    const responderLatVal = {{ responder.lat | tojson }};
+    const responderLonVal = {{ responder.lon | tojson }};
+
+    const map = L.map("map").setView([userLatVal, userLonVal], 16);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap contributors",
+    }).addTo(map);
+
+    L.marker([userLatVal, userLonVal]).addTo(map).bindPopup("📍 User Location").openPopup();
+
+    L.marker([responderLatVal, responderLonVal], {
+      icon: L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+      }),
+    }).addTo(map).bindPopup("🚨 Responder");
+
+    setTimeout(() => location.reload(), 5000);
+  </script>
 </body>
 </html>
-
-
-
