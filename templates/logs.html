@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPS Logs</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .btn-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-group form {
+            display: inline-block;
+        }
+
+        table {
+            width: 100%;
+            background-color: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid white;
+        }
+
+        th {
+            background-color: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📍 GPS Travel Logs</h2>
+
+        <div class="btn-group">
+            <a href="{{ url_for('logs') }}" class="btn">Show All</a>
+            <a href="{{ url_for('logs', role='User') }}" class="btn">User Only</a>
+            <a href="{{ url_for('logs', role='Responder') }}" class="btn">Responder Only</a>
+            <form method="POST" action="{{ url_for('clear_logs') }}" onsubmit="return confirm('Are you sure you want to delete all logs?');">
+                <button type="submit" class="btn" style="background-color: #e74c3c; color: white;">🗑️ Clear Logs</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Role</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Distance</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log[0] }}</td>
+                    <td>{{ log[1] }}</td>
+                    <td>{{ log[2] }}</td>
+                    <td>{{ log[3] }}</td>
+                    <td>{{ log[4] or '—' }}</td>
+                    <td>{{ log[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br>
+        <a href="{{ url_for('dashboard') }}" class="btn">⬅️ Back to Dashboard</a>
+    </div>
+</body>
+</html>

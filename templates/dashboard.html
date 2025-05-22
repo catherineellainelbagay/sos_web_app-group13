@@ -6,105 +6,7 @@
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    body {
-      background: linear-gradient(135deg, #f8b4b4, #f1efef);
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: rgb(0, 0, 0);
-    }
-
-    .container {
-      background: rgba(54, 72, 85, 0.803);
-      backdrop-filter: blur(12px);
-      border-radius: 15px;
-      padding: 30px 40px;
-      max-width: 700px;
-      margin: 40px auto;
-      box-shadow: 0 8px 32px 0 rgba(237, 235, 235, 0.095);
-      color: white;
-      border: 1px solid rgba(236, 221, 221, 0.1);
-    }
-
-    .section {
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 10px;
-    }
-
-    #map {
-      height: 300px;
-      width: 100%;
-      margin-top: 20px;
-      border-radius: 10px;
-    }
-
-    button, .btn {
-      background-color: transparent;
-      color: rgb(255, 255, 255);
-      border: 1px solid rgb(255, 255, 255);
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
-
-    button:hover, .btn:hover {
-      background-color: white;
-      color: #040404;
-    }
-
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .loading-overlay.active {
-      display: flex;
-    }
-
-    .spinner {
-      width: 30px;
-      height: 30px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      color: black;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-      display: none;
-      z-index: 10000;
-      text-align: center;
-    }
-
-    .modal.active {
-      display: block;
-    }
+    /* Removed body background here to avoid conflict with style.css */
   </style>
 </head>
 <body>
@@ -152,66 +54,63 @@
   <audio id="ping-sound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
- <script>
-  function sendSMS() {
-    const sound = document.getElementById("ping-sound");
-    sound?.play();
+  <script>
+    function sendSMS() {
+      const sound = document.getElementById("ping-sound");
+      sound?.play();
 
-    fetch("/send_sms")
-      .then((res) => res.json())
-      .then((data) => {
-        const modal = document.getElementById("simAlertModal");
-        modal.classList.add("active");
-        setTimeout(() => modal.classList.remove("active"), 2000);
-        document.getElementById("sms-status").innerText = data.message;
-      });
-  }
+      fetch("/send_sms")
+        .then((res) => res.json())
+        .then((data) => {
+          const modal = document.getElementById("simAlertModal");
+          modal.classList.add("active");
+          setTimeout(() => modal.classList.remove("active"), 2000);
+          document.getElementById("sms-status").innerText = data.message;
+        });
+    }
 
-  function showLoading() {
-    document.getElementById("loading").classList.add("active");
-  }
+    function showLoading() {
+      document.getElementById("loading").classList.add("active");
+    }
 
-  const userLatVal = {{ user.lat | tojson }};
-  const userLonVal = {{ user.lon | tojson }};
-  const responderLatVal = {{ responder.lat | tojson }};
-  const responderLonVal = {{ responder.lon | tojson }};
-  const currentDistance = {{ distance | tojson }};
+    const userLatVal = {{ user.lat | tojson }};
+    const userLonVal = {{ user.lon | tojson }};
+    const responderLatVal = {{ responder.lat | tojson }};
+    const responderLonVal = {{ responder.lon | tojson }};
+    const currentDistance = {{ distance | tojson }};
 
-  const map = L.map("map").setView([userLatVal, userLonVal], 16);
+    const map = L.map("map").setView([userLatVal, userLonVal], 16);
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap contributors",
-  }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap contributors",
+    }).addTo(map);
 
-  L.marker([userLatVal, userLonVal]).addTo(map)
-    .bindPopup("📍 User Location").openPopup();
+    L.marker([userLatVal, userLonVal]).addTo(map)
+      .bindPopup("📍 User Location").openPopup();
 
-  L.marker([responderLatVal, responderLonVal], {
-    icon: L.icon({
-      iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-    }),
-  }).addTo(map).bindPopup("🚨 Responder");
+    L.marker([responderLatVal, responderLonVal], {
+      icon: L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+      }),
+    }).addTo(map).bindPopup("🚨 Responder");
 
-  // 🟢 Draw white dashed line between user and responder
-  const lineCoords = [
-    [userLatVal, userLonVal],
-    [responderLatVal, responderLonVal]
-  ];
-  L.polyline(lineCoords, {
-    color: "black",
-    weight: 3,
-    dashArray: "5, 3"
-  }).addTo(map);
+    const lineCoords = [
+      [userLatVal, userLonVal],
+      [responderLatVal, responderLonVal]
+    ];
+    L.polyline(lineCoords, {
+      color: "black",
+      weight: 3,
+      dashArray: "5, 3"
+    }).addTo(map);
 
-  // 🔔 Alert if close
-  if (currentDistance <= 10) {
-    alert("🔔 Responder has arrived!");
-  }
+    if (currentDistance <= 10) {
+      alert("🔔 Responder has arrived!");
+    }
 
-  // 🔄 Auto-refresh after 5 seconds
-  setTimeout(() => location.reload(), 5000);
-</script>
+    setTimeout(() => location.reload(), 5000);
+  </script>
 </body>
 </html>

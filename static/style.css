@@ -1,44 +1,108 @@
+/* Body background: grayish blue with opacity */
+body {
+    background: rgba(20, 20, 20, 0.75);
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+}
 
-    body {
-        background: linear-gradient(135deg, #f1d7d8, #faf5f5);
-        height: 100vh;
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: white;
-    }
+/* Container with soft red background */
+.container {
+    background: rgb(234, 70, 70);  /* translucent dark */
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    padding: 30px 40px;
+    max-width: 700px;
+    margin: 40px auto;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgba(28, 28, 28, 0.1);
+}
 
-    .container {
-        background: rgba(210, 131, 131, 0.3);
-        backdrop-filter: blur(12px);
-        border-radius: 15px;
-        padding: 30px 40px;
-        max-width: 600px;
-        margin: auto;
-        margin-top: 60px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-        color: white;
-        border: 1px solid rgba(119, 235, 137, 0.2);
-    }
+/* Section style */
+.section {
+    background-color: rgba(255, 255, 255, 0.134);
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 10px;
+}
 
-    .section {
-        background-color: rgb(164, 244, 144);
-        padding: 15px;
-        margin-top: 20px;
-        border-radius: 10px;
-    }
+/* Map container */
+#map {
+    height: 300px;
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+}
 
-    button, .btn {
-        background-color: transparent;
-        color: rgb(251, 191, 191);
-        border: 1px solid rgb(229, 245, 165);
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: all 0.3s ease;
-    }
+/* Buttons */
+button, .btn {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
 
-    button:hover, .btn:hover {
-        background-color: rgb(130, 243, 157);
-        color: #ead6d6;
+button:hover, .btn:hover {
+    background-color: #000000;
+    color: white;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(121, 109, 109, 0.46);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+/* Spinner */
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 4px solid #00000070;
+    border-top: 4px solid rgb(255, 255, 255);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    color: black;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 10000;
+    text-align: center;
+}
+
+.modal.active {
+    display: block;
+}
