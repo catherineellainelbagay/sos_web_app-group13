@@ -6,28 +6,28 @@
     <title>Login - SOS Responder</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
-        body {
-            background: linear-gradient(135deg, #E63946, #E63946);
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    body {
+        background: #a2ab83; 
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        .glass-box {
-            background: rgba(20, 20, 20, 0.75);
-            backdrop-filter: blur(12px);
-            border-radius: 15px;
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+         .glass-box {
+        background: rgba(73, 69, 69); 
+        backdrop-filter: blur(12px);
+        border-radius: 15px;
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
 
         .glass-box h2 {
             margin-bottom: 20px;
@@ -53,8 +53,8 @@
             display: none;
             width: 20px;
             height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #ffffff;
+            border: 4px solid #00000070;
+            border-top: 4px solid rgb(255, 255, 255);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 10px auto;
@@ -98,8 +98,6 @@
             <div id="spinner" class="spinner"></div>
         </form>
     </div>
-
-    <audio id="ping-sound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
 
     <script>
         function startLogin() {

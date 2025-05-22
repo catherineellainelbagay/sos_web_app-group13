@@ -92,11 +92,35 @@ def simulate():
 
     return redirect(url_for('dashboard'))
 
+@app.route('/update_location', methods=['POST'])
+def update_location():
+    try:
+        lat = float(request.form.get('lat'))
+        lon = float(request.form.get('lon'))
+        user_location['lat'] = lat
+        user_location['lon'] = lon
+        log_position('User', lat, lon)
+        print(f"✅ Received real location: {lat}, {lon}")
+        return jsonify({"status": "success", "lat": lat, "lon": lon})
+    except Exception as e:
+        print("❌ Failed to update location:", e)
+        return jsonify({"status": "error"}), 400
+
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/logs')
+def logs():
+    conn = sqlite3.connect('gps_logs.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM gps_logs ORDER BY timestamp DESC")
+    data = c.fetchall()
+    conn.close()
+    return render_template('logs.html', logs=data)
+
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

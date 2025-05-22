@@ -1,28 +1,27 @@
-/* Body background: grayish blue with opacity */
+
 body {
-    background: rgba(20, 20, 20, 0.75);
+    background: #a2ab83;
     height: 100vh;
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
+    color: rgb(255, 255, 255);
 }
 
-/* Container with soft red background */
 .container {
-    background: rgb(234, 70, 70);  /* translucent dark */
+    background: rgb(73, 69, 69); 
     backdrop-filter: blur(12px);
     border-radius: 15px;
     padding: 30px 40px;
     max-width: 700px;
     margin: 40px auto;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    color: rgb(255, 255, 255);
-    border: 1px solid rgba(28, 28, 28, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    border: 1px solid rgba(107, 104, 104, 0.316);
 }
 
 /* Section style */
 .section {
-    background-color: rgba(255, 255, 255, 0.134);
+    background-color: rgba(148, 141, 141, 0.501);
     padding: 15px;
     margin-top: 20px;
     border-radius: 10px;
@@ -39,8 +38,8 @@ body {
 /* Buttons */
 button, .btn {
     background-color: transparent;
-    color: #ffffff;
-    border: 1px solid #ffffff;
+    color: white;
+    border: 1px solid white;
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
@@ -49,8 +48,8 @@ button, .btn {
 }
 
 button:hover, .btn:hover {
-    background-color: #000000;
-    color: white;
+    background-color: white;
+    color: #000000;
 }
 
 /* Loading overlay */
